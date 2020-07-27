@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tetris</title>
+
+    <style>
+      body {
+        overflow: hidden;
+        font-family: Arial, Helvetica, sans-serif;
+        color: #333;
+      }
+
+      .page-wrapper {
+        flex: 1;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .page-container {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: stretch;
+      }
+
+      .game-container {
+        flex: 1;
+      }
+
+      .data-container {
+        border: 1px solid #ccc;
+        width: 150px;
+        text-align: center;
+        margin: 8px 0;
+      }
+
+      .data-container > h1 {
+        font-size: 14px;
+        font-weight: bold;
+        color: #666;
+      }
+
+      .dal-back {
+        height: 25px;
+        width: 125px;
+        margin: 4px auto;
+        background-color: #333;
+        position: relative;
+      }
+
+      .dal-front {
+        height: 25px;
+        background-color: green;
+        width: 0;
+      }
+
+      .dal-value {
+        position: absolute;
+        color: white;
+        top: 0;
+        left: 0;
+        width: 125px;
+        height: 25px;
+        text-align: center;
+        line-height: 25px;
+      }
+
+      #dalValue {
+        margin: 0;
+      }
+
+      .left-panel {
+        flex: 1;
+        margin-right: 24px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+
+      .right-panel {
+        flex: 1;
+        margin-left: 24px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+      }
+
+      .game-canvas {
+        /* width: 309px;
+        height: 618px; */
+        border: 1px solid #ccc;
+      }
+
+      .nextblock-canvas {
+        margin-top: 30px;
+      }
+
+      .gameOverContainer {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        display: none;
+      }
+
+      .gameOver {
+        box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2),
+          0px 1px 1px 0px rgba(0, 0, 0, 0.14),
+          0px 1px 3px 0px rgba(0, 0, 0, 0.12);
+        border-radius: 4px;
+        color: rgba(0, 0, 0, 0.87);
+        transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+        background-color: #fff;
+        padding: 24px;
+        position: absolute;
+        text-align: center;
+        min-width: 400px;
+      }
+
+      .gameOver button {
+        color: #fff;
+        background-color: #1976d2;
+        margin: 8px;
+        box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2),
+          0px 2px 2px 0px rgba(0, 0, 0, 0.14),
+          0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+        padding: 6px 16px;
+        font-size: 0.875rem;
+        min-width: 64px;
+        box-sizing: border-box;
+        transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,
+          box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,
+          border 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+        font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+        font-weight: 500;
+        line-height: 1.75;
+        border-radius: 4px;
+        letter-spacing: 0.02857em;
+        text-transform: uppercase;
+        border: 0;
+      }
+
+      .spacer {
+        height: 16px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page-wrapper">
+      <div id="gameOver" class="gameOverContainer">
+        <div class="gameOver">
+          <h1>Game over</h1>
+          <button type="button" id="restart">Restart</button>
+        </div>
+      </div>
+      <div class="page-container">
+        <div id="leftPanel" class="left-panel">
+          <div class="data-container level-container">
+            <p id="level">Level 1</p>
+          </div>
+          <div id="debug" class="data-container">
+            <h1>DAL Value</h1>
+            <div id="dal" class="dal-back">
+              <div class="dal-value">
+                <p id="dalValue">0</p>
+              </div>
+              <div id="dalValueBar" class="dal-front"></div>
+            </div>
+            <div class="spacer"></div>
+            <h1>Gravity Counter</h1>
+            <p id="downTimer">
+              <span id="currentDown">0</span>
+              /
+              <span id="maxDown">48</span>
+            </p>
+          </div>
+          <div class="data-container" id="shapeStats">
+            <p>O: <span id="o">0</span></p>
+            <p>I: <span id="i">0</span></p>
+            <p>L: <span id="l">0</span></p>
+            <p>J: <span id="j">0</span></p>
+            <p>S: <span id="s">0</span></p>
+            <p>Z: <span id="z">0</span></p>
+            <p>T: <span id="t">0</span></p>
+          </div>
+        </div>
+        <div id="gameContainer" class="game-container">
+          <!-- Game canvas will be added here -->
+        </div>
+        <div id="rightPanel" class="right-panel">
+          <div class="data-container">
+            <p id="frameRate">60 fps</p>
+          </div>
+          <div id="nextBlock" class="data-container">
+            <h1>Next Block</h1>
+            <!-- Canvas for next block will be here -->
+          </div>
+          <div class="data-container">
+            <h1>Top Score</h1>
+            <p id="topScore">0</p>
+            <h1>Current Score</h1>
+            <p id="score">0</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="main.js"></script>
+  </body>
+</html>
