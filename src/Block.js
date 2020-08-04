@@ -26,8 +26,12 @@ export class Shape {
     return (this.currentShape + 1) % this.variations.length;
   }
 
-  rotate () {
-    this.currentShape = this.getNextRotation();
+  getPreviousRotation () {
+    return (this.currentShape + 3) % this.variations.length;
+  }
+
+  rotate (isClockwise = true) {
+    this.currentShape = isClockwise ? this.getNextRotation() : this.getPreviousRotation();
   }
 
   // The param here represents a delta

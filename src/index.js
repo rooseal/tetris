@@ -211,7 +211,7 @@ function moveBlockDown () {
   }
 }
 
-function rotateBlock () {
+function rotateBlock (isClockwise) {
   const nextMoveBlocks = currentBlock.getBlocks({ rotate: true });
 
   const hasCollision = nextMoveBlocks.some(
@@ -220,7 +220,7 @@ function rotateBlock () {
 
   if (!hasCollision) {
     squaresToClear = [...squaresToClear, ...currentBlock.getBlocks()];
-    currentBlock.rotate(); 
+    currentBlock.rotate(isClockwise); 
   }
 }
 
@@ -254,8 +254,11 @@ const actionDownHandlers = {
   moveDown: () => {
     moveBlockDown();
   },
-  rotate: () => {
-    rotateBlock();
+  rotateClockwise: () => {
+    rotateBlock(true);
+  },
+  rotateCounterClockwise: () => {
+    rotateBlock(false);
   }
 };
 
@@ -267,7 +270,8 @@ const actionUpHandlers = {
     increaseDal = false;
   },
   moveDown: () => {},
-  rotate: () => {}
+  rotateClockwise: () => {},
+  rotateCounterClockwise: () => {}
 };
 
 function keyDownHandler (event) {
