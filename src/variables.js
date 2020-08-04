@@ -9,7 +9,8 @@ export const keyBindings = {
   moveLeft: 37,
   moveRight: 39,
   moveDown: 40,
-  rotate: 38
+  rotateClockwise: 38,
+  rotateCounterClockwise: 90
 }
 
 export const getPoints = (level, lines) => {
